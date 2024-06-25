@@ -1,0 +1,86 @@
+version: "3"
+services:
+  wiremock1:
+    image: "wiremock/wiremock:latest"
+    container_name: wiremock1
+    networks:
+      - minha-rede
+    ports:
+      - "8080"
+    volumes:
+      - ./docker-resources/wiremock/__files:/home/wiremock/__files
+      - ./docker-resources/wiremock/mappings:/home/wiremock/mappings
+    entrypoint: ["/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose"]
+
+  wiremock2:
+    image: "wiremock/wiremock:latest"
+    container_name: wiremock2
+    networks:
+      - minha-rede
+    ports:
+      - "8080"
+    volumes:
+      - ./docker-resources/wiremock/__files:/home/wiremock/__files
+      - ./docker-resources/wiremock/mappings:/home/wiremock/mappings
+    entrypoint: [ "/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose" ]
+
+  wiremock3:
+    image: "wiremock/wiremock:latest"
+    container_name: wiremock3
+    networks:
+      - minha-rede
+    ports:
+      - "8080"
+    volumes:
+      - ./docker-resources/wiremock/__files:/home/wiremock/__files
+      - ./docker-resources/wiremock/mappings:/home/wiremock/mappings
+    entrypoint: [ "/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose" ]
+  wiremock4:
+    image: "wiremock/wiremock:latest"
+    container_name: wiremock4
+    networks:
+      - minha-rede
+    ports:
+      - "8080"
+    volumes:
+      - ./docker-resources/wiremock/__files:/home/wiremock/__files
+      - ./docker-resources/wiremock/mappings:/home/wiremock/mappings
+    entrypoint: [ "/docker-entrypoint.sh", "--global-response-templating", "--disable-gzip", "--verbose" ]
+
+  nginx:
+    build:
+      dockerfile: ./docker-resources/nginx/nginx.dockerfile
+      context: .
+    image: nginx
+    container_name: container-lb
+    ports:
+      - "8080:80"
+    networks:
+      - minha-rede
+    depends_on:
+      - "wiremock1"
+      - "wiremock2"
+      - "wiremock3"
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "Postgres2022!"
+    ports:
+      - "5432:5432"
+    networks:
+      - minha-rede
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "teste@teste.com"
+      PGADMIN_DEFAULT_PASSWORD: "Postgres2022!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    networks:
+      - minha-rede
+
+networks:
+  minha-rede:

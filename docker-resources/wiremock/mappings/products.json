@@ -1,0 +1,15 @@
+{
+    "request" : {
+        "method" : "GET",
+        "urlPathPattern": "/products/(.*)"
+    },
+    "response" : {
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "transformers": ["response-template", "json-body-transformer"],
+        "bodyFileName" : "products.json",
+        "status": "200"
+    }
+
+}

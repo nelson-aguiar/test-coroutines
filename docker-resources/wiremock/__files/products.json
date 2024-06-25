@@ -1,0 +1,5 @@
+{
+  "idProduto": "{{request.pathSegments.[1]}}",
+  "SKU": "{{request.pathSegments.[1]}}",
+  "nomeProduto": "{{randomValue length=5 type='ALPHANUMERIC' }}"
+}
