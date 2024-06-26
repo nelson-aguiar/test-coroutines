@@ -1,12 +1,10 @@
 package com.nelson.aguiar.graaltest.configuration
 
-import com.nelson.aguiar.graaltest.http.client.ClientHitHub
+import com.nelson.aguiar.graaltest.http.client.ClientProduct
+import com.nelson.aguiar.graaltest.http.client.InventoryClient
 import io.netty.channel.ChannelOption
 import io.netty.channel.epoll.EpollChannelOption
 import mu.KLogging
-import org.jobrunr.jobs.mappers.JobMapper
-import org.jobrunr.storage.InMemoryStorageProvider
-import org.jobrunr.storage.StorageProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,23 +23,17 @@ import java.util.function.Consumer
 
 
 @Configuration
-class ClientConfig(@Value("\${api.github.url}") var url: String) {
+class ClientConfig(@Value("\${api.product.url}",) var urlProduct: String,
+                   @Value("\${api.inventory.url}",) var urlInventory: String) {
 
     private val logger = KLogging().logger("ClientConfig")
 
-//    @Bean
-//    fun storageProvider(jobMapper: JobMapper?): StorageProvider {
-//        val storageProvider = InMemoryStorageProvider()
-//        storageProvider.setJobMapper(jobMapper)
-//        return storageProvider
-//    }
-
     @Bean
-    fun webClient(): WebClient {
+    fun webClient(url: String): WebClient {
 
         val connectionProvider = ConnectionProvider.builder("myConnectionPool")
-                .maxConnections(10000)
-                .pendingAcquireMaxCount(50000)
+                .maxConnections(1000)
+                .pendingAcquireMaxCount(10000)
                 .pendingAcquireTimeout(Duration.ofSeconds(120))
                 .maxIdleTime(Duration.ofSeconds(60))
                 .maxLifeTime(Duration.ofSeconds(60))
@@ -65,10 +57,17 @@ class ClientConfig(@Value("\${api.github.url}") var url: String) {
     }
 
     @Bean
-    fun toDoService(): ClientHitHub {
+    fun clientProduct(): ClientProduct {
         val httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(
-                WebClientAdapter.create(webClient())).build()
-        return httpServiceProxyFactory.createClient(ClientHitHub::class.java)
+                WebClientAdapter.create(webClient(urlProduct))).build()
+        return httpServiceProxyFactory.createClient(ClientProduct::class.java)
+    }
+
+    @Bean
+    fun clientInventory(): InventoryClient {
+        val httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(
+            WebClientAdapter.create(webClient(urlInventory))).build()
+        return httpServiceProxyFactory.createClient(InventoryClient::class.java)
     }
 
     private fun logRequest(): ExchangeFilterFunction {

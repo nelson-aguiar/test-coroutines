@@ -18,12 +18,12 @@ import kotlin.streams.toList
 class ProductsApi(val asyncProductsService: AsyncProductsService) {
 
 
-    @GetMapping()
+    @GetMapping
     suspend fun getProducts() :String{
         val start = Instant.now()
-        val listSkus = IntStream.range(100, 10000).mapToObj { it.toString() }.toList()
+        val listSkus = IntStream.range(100, 5000).mapToObj { it.toString() }.toList()
         withContext(Dispatchers.IO){
-            asyncProductsService.getProductsAndDispatcher(listSkus);
+            asyncProductsService.getProductsFlowExample(listSkus);
         }
 
         val end = Instant.now()
@@ -33,16 +33,5 @@ class ProductsApi(val asyncProductsService: AsyncProductsService) {
         System.err.println("Duration:"+java.time.Duration.between( start, end,))
         return "${listSkus.size} request at ==> $duration"
 
-    }
-
-    @GetMapping("/job")
-    suspend fun job() :String{
-        val id =asyncProductsService.executeJob()
-        return "execunting job id $id"
-    }
-    @DeleteMapping("/job/{jobId}")
-    suspend fun jobDelete(@PathVariable("jobId") jobId: UUID) :String{
-        asyncProductsService.deleteJob(jobId)
-        return "deleting"
     }
 }

@@ -1,0 +1,15 @@
+{
+  "request" : {
+    "method" : "GET",
+    "urlPathPattern": "/inventory/products/(.*)"
+  },
+  "response" : {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": ["response-template", "json-body-transformer"],
+    "bodyFileName" : "inventory.json",
+    "status": "200"
+  }
+
+}

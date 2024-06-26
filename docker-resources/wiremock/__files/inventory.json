@@ -1,0 +1,6 @@
+{
+  "productId": "{{request.pathSegments.[1]}}",
+  "inventoryId": "{{pickRandom '15' '100' '450' '13' '45'}}",
+  "location": "{{pickRandom 'SP' 'PR' 'GO'}}",
+  "quantity": "{{pickRandom '15' '100' '450' '13' '45'}}"
+}

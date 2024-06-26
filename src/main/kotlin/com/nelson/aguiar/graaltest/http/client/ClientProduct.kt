@@ -7,11 +7,11 @@ import org.springframework.web.service.annotation.HttpExchange
 import reactor.core.publisher.Mono
 
 @HttpExchange(url = "/products", contentType = "pplication/json",accept = ["application/json"])
-interface ClientHitHub {
+interface ClientProduct {
 
     @GetExchange("/{sku}")
-    suspend fun getProducts(@PathVariable("sku") sku: String): Product
+    suspend fun getProduct(@PathVariable("sku") sku: String): Product
     @GetExchange("/{sku}")
-    fun getProductsNonCouroutines(@PathVariable("sku") sku: String): Mono<Product>
+    fun getProductsReactive(@PathVariable("sku") sku: String): Mono<Product>
 
 }
